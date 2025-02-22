@@ -1,0 +1,700 @@
+{
+	"info": {
+		"_postman_id": "a8e29545-f3ee-4441-8c69-f5108fbb060d",
+		"name": "PetUsers",
+		"schema": "https://schema.postman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"const schema = {\r",
+							"    \"type\": \"object\",\r",
+							"    \"properties\": {\r",
+							"        \"code\": { \"type\": \"integer\" },\r",
+							"        \"type\": { \"type\": \"string\" },\r",
+							"        \"message\": { \"type\": \"string\" }\r",
+							"    },\r",
+							"    \"required\": [\"code\", \"type\", \"message\"]\r",
+							"};\r",
+							"\r",
+							"// Validate the response\r",
+							"pm.test(\"Code is 200\", function () {\r",
+							"    pm.expect(jsonData.code).to.eql(200);\r",
+							"    pm.expect(jsonData.type).to.eql(\"unknown\");\r",
+							"    pm.expect(jsonData.message).to.eql(\"ok\");\r",
+							"});\r",
+							"\r",
+							"// to validate response code\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// to validate response time\r",
+							"pm.test(\"Response time is less than 200ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+							"});\r",
+							"\r",
+							"// Validate response headers\r",
+							"pm.test(\"Content-Type is application/json\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\", \"application/json\");\r",
+							"});\r",
+							"\r",
+							"//Validate the server \r",
+							"pm.test(\"Server is either nginx or Jetty\", function () {\r",
+							"    const serverHeader = pm.response.headers.get(\"Server\");\r",
+							"    pm.expect(serverHeader).to.match(/nginx|Jetty/);\r",
+							"});\r",
+							"\r",
+							"//Validate Json Schema\r",
+							"pm.test(\"Response matches JSON schema\", function () {\r",
+							"    pm.expect(jsonData).to.have.jsonSchema(schema);\r",
+							"});\r",
+							"\r",
+							"// Check for non-empty fields\r",
+							"pm.test(\"Fields are not empty\", function () {\r",
+							"    pm.expect(jsonData.type).to.not.be.empty;\r",
+							"    pm.expect(jsonData.message).to.not.be.empty;\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"id": "b310e5ee-c0df-4852-87f8-13cd524e492a"
+					}
+				}
+			],
+			"id": "324a7bb2-04ad-4d0b-adef-e9eea73ab395",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n  {\n    \"id\": \"{{id}}\",\n    \"username\": \"{{username}}\",\n    \"firstName\":\"{{firstname}}\",\n    \"lastName\": \"{{lastname}}\",\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\",\n    \"phone\": \"{{phone}}\",\n    \"userStatus\": {{userstatus}}\n  }\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{BaseUrl}}/createWithList"
+			},
+			"response": []
+		},
+		{
+			"name": "Get User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Parse the JSON response\r",
+							"var jsonData = pm.response.json();\r",
+							"const schema = {\r",
+							"    \"type\": \"object\",\r",
+							"    \"properties\": {\r",
+							"        \"id\": { \"type\": \"integer\" },\r",
+							"        \"username\": { \"type\": \"string\" },\r",
+							"        \"firstName\": { \"type\": \"string\" },\r",
+							"        \"lastName\": { \"type\": \"string\" },\r",
+							"        \"email\": { \"type\": \"string\" }\r",
+							"    },\r",
+							"    \"required\": [\"id\", \"username\", \"firstName\", \"lastName\", \"email\"]\r",
+							"};\r",
+							"\r",
+							"\r",
+							"// Retrieve the values of the variables\r",
+							"var expectedId = pm.variables.get(\"id\");\r",
+							"var expectedUsername = pm.variables.get(\"username\");\r",
+							"var expectedFirstName = pm.variables.get(\"firstname\");\r",
+							"var expectedLastName = pm.variables.get(\"lastname\");\r",
+							"var expectedEmail = pm.variables.get(\"email\");\r",
+							"\r",
+							"\r",
+							"// Validate the response\r",
+							"pm.test(\"ID is \" + expectedId, function () {\r",
+							"    pm.expect(jsonData.id).to.eql(parseInt(expectedId));\r",
+							"    pm.expect(jsonData.username).to.eql(expectedUsername);\r",
+							"    pm.expect(jsonData.firstName).to.eql(expectedFirstName);\r",
+							"    pm.expect(jsonData.lastName).to.eql(expectedLastName);\r",
+							"    pm.expect(jsonData.email).to.eql(expectedEmail);\r",
+							"\r",
+							"\r",
+							"});\r",
+							"\r",
+							"// to validate response code\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// to validate response time\r",
+							"pm.test(\"Response time is less than 200ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+							"});\r",
+							"\r",
+							"// Datatype validations\r",
+							"pm.test(\"Validate data types\", function () {\r",
+							"    pm.expect(jsonData.id).to.be.a('number');\r",
+							"    pm.expect(jsonData.username).to.be.a('string');\r",
+							"    pm.expect(jsonData.firstName).to.be.a('string');\r",
+							"    pm.expect(jsonData.lastName).to.be.a('string');\r",
+							"    pm.expect(jsonData.email).to.be.a('string');\r",
+							"});\r",
+							"\r",
+							"// Field Validations\r",
+							"pm.test(\"Fields are not empty\", function () {\r",
+							"    pm.expect(jsonData.username).to.not.be.empty;\r",
+							"    pm.expect(jsonData.firstName).to.not.be.empty;\r",
+							"    pm.expect(jsonData.lastName).to.not.be.empty;\r",
+							"    pm.expect(jsonData.email).to.not.be.empty;\r",
+							"});\r",
+							"\r",
+							"//Email format validation\r",
+							"pm.test(\"Validate email format\", function () {\r",
+							"    const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\r",
+							"    pm.expect(jsonData.email).to.match(emailRegex);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"//schema validation\r",
+							"pm.test(\"Response matches JSON schema\", function () {\r",
+							"    pm.expect(jsonData).to.have.jsonSchema(schema);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"id": "91629970-6d14-4d84-8fea-a8edfb6669df"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"id": "a1ef8af8-bae3-4b59-a033-9460ad82263f"
+					}
+				}
+			],
+			"id": "2467934d-09b2-43c3-890e-c5391dbaa73a",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json"
+					}
+				],
+				"url": "{{BaseUrl}}/{{username}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Update User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Parse the JSON response\r",
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"// Validate the response\r",
+							"pm.test(\"Validate data types\", function () {\r",
+							"    pm.expect(jsonData.code).to.be.a('number');\r",
+							"    pm.expect(jsonData.type).to.be.a('string');\r",
+							"    pm.expect(jsonData.message).to.be.a('string');\r",
+							"});\r",
+							"\r",
+							"//validate fields\r",
+							"pm.test(\"Fields are not empty\", function () {\r",
+							"    pm.expect(jsonData.type).to.not.be.empty;\r",
+							"    pm.expect(jsonData.message).to.not.be.empty;\r",
+							"});\r",
+							"\r",
+							"//validate response values\r",
+							"pm.test(\"Validate specific values\", function () {\r",
+							"    pm.expect(jsonData.code).to.eql(200);\r",
+							"    pm.expect(jsonData.type).to.eql(\"unknown\");\r",
+							"    pm.expect(jsonData.message).to.eql(\"1\");\r",
+							"});\r",
+							"\r",
+							"// to validate response code\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// to validate response time\r",
+							"pm.test(\"Response time is less than 200ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+							"});\r",
+							"\r",
+							"//validate response is a valid json\r",
+							"pm.test(\"Response is valid JSON\", function () {\r",
+							"    pm.expect(() => JSON.parse(responseBody)).not.to.throw();\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"id": "7e5e7eb0-5263-459f-a23d-1a95c3a7df20"
+					}
+				}
+			],
+			"id": "d3e59163-48a0-4276-a721-4e78114e826f",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"id\": 1,\n  \"username\": \"{{username1}}\",\n  \"firstName\": \"{{firstname1}}\",\n  \"lastName\": \"{{lastname1}}\",\n  \"email\": \"string@gmail.com\",\n  \"password\": \"xxxxx\",\n  \"phone\": \"string\",\n  \"userStatus\": 0\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{BaseUrl}}/{{username1}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Updated User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"var expectedUsername = pm.variables.get(\"username1\");\r",
+							"var expectedFirstName = pm.variables.get(\"firstname1\");\r",
+							"var expectedLastName = pm.variables.get(\"lastname1\");\r",
+							"\r",
+							"const schema = {\r",
+							"    \"type\": \"object\",\r",
+							"    \"properties\": {\r",
+							"        \"id\": { \"type\": \"integer\" },\r",
+							"        \"username\": { \"type\": \"string\" },\r",
+							"        \"firstName\": { \"type\": \"string\" },\r",
+							"        \"lastName\": { \"type\": \"string\" },\r",
+							"        \"email\": { \"type\": \"string\" },\r",
+							"        \"password\": { \"type\": \"string\" },\r",
+							"        \"phone\": { \"type\": \"string\" },\r",
+							"        \"userStatus\": { \"type\": \"integer\" }\r",
+							"    },\r",
+							"    \"required\": [\"id\", \"username\", \"firstName\", \"lastName\", \"email\", \"password\", \"phone\", \"userStatus\"]\r",
+							"};\r",
+							"\r",
+							"\r",
+							"// Validate the response\r",
+							"pm.test(\"Username is \" + expectedUsername, function () {\r",
+							"    pm.expect(jsonData.username).to.eql(expectedUsername);\r",
+							"    pm.expect(jsonData.firstName).to.eql(expectedFirstName);\r",
+							"    pm.expect(jsonData.lastName).to.eql(expectedLastName);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"// to validate response code\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// to validate response time\r",
+							"pm.test(\"Response time is less than 200ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+							"});\r",
+							"\r",
+							"// Validate data types\r",
+							"pm.test(\"Validate data types\", function () {\r",
+							"    pm.expect(jsonData.id).to.be.a('number');\r",
+							"    pm.expect(jsonData.username).to.be.a('string');\r",
+							"    pm.expect(jsonData.firstName).to.be.a('string');\r",
+							"    pm.expect(jsonData.lastName).to.be.a('string');\r",
+							"    pm.expect(jsonData.email).to.be.a('string');\r",
+							"    pm.expect(jsonData.password).to.be.a('string');\r",
+							"    pm.expect(jsonData.phone).to.be.a('string');\r",
+							"    pm.expect(jsonData.userStatus).to.be.a('number');\r",
+							"});\r",
+							"\r",
+							"\r",
+							"// Check for non-empty fields\r",
+							"pm.test(\"Fields are not empty\", function () {\r",
+							"    pm.expect(jsonData.username).to.not.be.empty;\r",
+							"    pm.expect(jsonData.firstName).to.not.be.empty;\r",
+							"    pm.expect(jsonData.lastName).to.not.be.empty;\r",
+							"    pm.expect(jsonData.email).to.not.be.empty;\r",
+							"    pm.expect(jsonData.password).to.not.be.empty;\r",
+							"    pm.expect(jsonData.phone).to.not.be.empty;\r",
+							"});\r",
+							"\r",
+							"// Validate email format\r",
+							"pm.test(\"Validate email format\", function () {\r",
+							"    const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\r",
+							"    pm.expect(jsonData.email).to.match(emailRegex);\r",
+							"});\r",
+							"\r",
+							"//Validate schema\r",
+							"pm.test(\"Response matches JSON schema\", function () {\r",
+							"    pm.expect(jsonData).to.have.jsonSchema(schema);\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"id": "933e3835-0c8a-47f0-b979-31896462578d"
+					}
+				}
+			],
+			"id": "f8e9db1f-783c-47b9-a57e-e11332018417",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{BaseUrl}}/{{username1}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"var expectedUsername = pm.variables.get(\"username1\");\r",
+							"const schema = {\r",
+							"    \"type\": \"object\",\r",
+							"    \"properties\": {\r",
+							"        \"code\": { \"type\": \"integer\" },\r",
+							"        \"type\": { \"type\": \"string\" },\r",
+							"        \"message\": { \"type\": \"string\" }\r",
+							"    },\r",
+							"    \"required\": [\"code\", \"type\", \"message\"]\r",
+							"};\r",
+							"\r",
+							"\r",
+							"//Verify deleted user\r",
+							"pm.test(\"Username is \" + expectedUsername, function () {\r",
+							"    pm.expect(jsonData.message).to.eql(expectedUsername);\r",
+							"   \r",
+							"});\r",
+							"\r",
+							"// to validate response code\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// to validate response time\r",
+							"pm.test(\"Response time is less than 200ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"//validate datatypes\r",
+							"pm.test(\"Validate data types\", function () {\r",
+							"    pm.expect(jsonData.code).to.be.a('number');\r",
+							"    pm.expect(jsonData.type).to.be.a('string');\r",
+							"    pm.expect(jsonData.message).to.be.a('string');\r",
+							"});\r",
+							"\r",
+							"\r",
+							"//check for non empty validations\r",
+							"pm.test(\"Fields are not empty\", function () {\r",
+							"    pm.expect(jsonData.type).to.not.be.empty;\r",
+							"    pm.expect(jsonData.message).to.not.be.empty;\r",
+							"});\r",
+							"\r",
+							"//Validate json schema\r",
+							"pm.test(\"Response matches JSON schema\", function () {\r",
+							"    pm.expect(jsonData).to.have.jsonSchema(schema);\r",
+							"});\r",
+							"\r",
+							"//validate if response is a valid json\r",
+							"pm.test(\"Response is valid JSON\", function () {\r",
+							"    pm.expect(() => JSON.parse(responseBody)).not.to.throw();\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"id": "a09be669-45f7-4ae3-bc20-a5a6d059164e"
+					}
+				}
+			],
+			"id": "8dd6c956-d0ee-437b-a7c1-e59de441a857",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json"
+					}
+				],
+				"url": "{{BaseUrl}}/{{username1}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Deleted User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Parse the JSON response\r",
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"// Validate response\r",
+							"pm.test(\"Validate specific values\", function () {\r",
+							"    pm.expect(jsonData.code).to.eql(1);\r",
+							"    pm.expect(jsonData.type).to.eql(\"error\");\r",
+							"    pm.expect(jsonData.message).to.eql(\"User not found\");\r",
+							"});\r",
+							"\r",
+							"//validate response code\r",
+							"pm.test(\"Status code is 404\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"//Validate response code\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"id": "4b28141a-61b2-481c-9a03-a17d13332998"
+					}
+				}
+			],
+			"id": "47176159-e14e-4e78-b033-28c47a1e2b2f",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": "{{BaseUrl}}/{{username1}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Login User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Parse the JSON response\r",
+							"var jsonData = pm.response.json();\r",
+							"var expectedmessage = jsonData.message;\r",
+							"\r",
+							"// Validate the response\r",
+							"pm.test(\"Validate specific values\", function () {\r",
+							"    pm.expect(jsonData.code).to.eql(200);\r",
+							"    pm.expect(jsonData.type).to.eql(\"unknown\");\r",
+							"    pm.expect(jsonData.message).to.match(/^logged in user session:\\d+$/);\r",
+							"});\r",
+							"\r",
+							"//validate response code\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// to validate response time\r",
+							"pm.test(\"Response time is less than 200ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+							"});\r",
+							"\r",
+							"// Validate data types\r",
+							"pm.test(\"Validate data types\", function () {\r",
+							"    pm.expect(jsonData.code).to.be.a('number');\r",
+							"    pm.expect(jsonData.type).to.be.a('string');\r",
+							"    pm.expect(jsonData.message).to.be.a('string');\r",
+							"});\r",
+							"\r",
+							"// Check for non-empty fields\r",
+							"pm.test(\"Fields are not empty\", function () {\r",
+							"    pm.expect(jsonData.type).to.not.be.empty;\r",
+							"    pm.expect(jsonData.message).to.not.be.empty;\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"id": "3e33783b-ac52-4a30-b80e-7caaae11deec"
+					}
+				}
+			],
+			"id": "b5ddd634-8727-4c4d-8403-a77d1586901e",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{BaseUrl}}/login?username={{vault:un}}&password={{vault:pd}}",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"login"
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "{{vault:un}}"
+						},
+						{
+							"key": "password",
+							"value": "{{vault:pd}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Parse the JSON response\r",
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"\r",
+							"// Validate the response\r",
+							"pm.test(\"Validate specific values\", function () {\r",
+							"    pm.expect(jsonData.code).to.eql(200);\r",
+							"    pm.expect(jsonData.type).to.eql(\"unknown\");\r",
+							"    pm.expect(jsonData.message).to.match(/^ok$/);\r",
+							"});\r",
+							"\r",
+							"//validate response time\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// to validate response time\r",
+							"pm.test(\"Response time is less than 200ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"id": "9854f8be-224c-48b5-bf0c-88d6fbaa82c2"
+					}
+				}
+			],
+			"id": "39807bef-cdf5-4a12-a245-730a62c0bd2b",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://petstore.swagger.io/v2/user/logout"
+			},
+			"response": []
+		}
+	]
+}
